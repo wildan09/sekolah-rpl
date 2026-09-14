@@ -5,6 +5,6 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Dashboard', [
-        'pesan' => 'halo dari Laravel + Inertia + Vue!'
+        'pesan' => ''
     ]);
 });
