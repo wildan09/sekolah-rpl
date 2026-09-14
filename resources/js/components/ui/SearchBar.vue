@@ -1,15 +1,24 @@
 <template>
-    <div class="relative w-full max-w-180">
-        <img
-            src="/icons/search.svg"
-            alt=""
-            class="pointer-events-none absolute left-6 top-1/2 h-7 w-7 -translate-y-1/2 object-contain"
-        />
-
+    <div
+        class="flex h-12 w-full max-w-175 justify-end overflow-hidden transition-all duration-1000 ease-in-out"
+    >
+        <!-- Input -->
         <input
             type="text"
-            placeholder="Search"
-            class="h-16 w-full rounded-full border-[3px] border-black bg-white pl-[68px] pr-6 text-[18px] text-black outline-none transition-all duration-200 placeholder:text-gray-500 focus:border-black"
+            placeholder="Search..."
+            class="h-12 min-w-0 flex-1 border border-gray-300 bg-white px-4 text-sm text-gray-700 outline-none placeholder:text-gray-400 transition-all duration-1000 ease-in-out focus:border-gray-400 max-sm:w-0 max-sm:flex-none max-sm:px-0 max-sm:opacity-0"
         />
+
+        <!-- Search Button -->
+        <button
+            type="button"
+            class="flex h-12 w-13 shrink-0 items-center justify-center bg-[#252525] transition-all duration-1000 ease-in-out hover:bg-[#111111] max-sm:h-12 max-sm:w-12 max-sm:rounded-full"
+        >
+            <img
+                src="/icons/search.png"
+                alt="Search"
+                class="h-5 w-5 object-contain"
+            />
+        </button>
     </div>
 </template>
