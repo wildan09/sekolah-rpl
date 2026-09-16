@@ -28,7 +28,7 @@ const steps = [
 </script>
 
 <template>
-    <section class="mx-auto w-full px-4 py-10 sm:px-8 lg:px-[110px] lg:py-16">
+    <section class="mx-auto w-full px-4 py-10 sm:px-8 lg:px-27.5 lg:py-16">
         <div class="mx-auto mb-12 max-w-2xl text-center lg:mb-16">
             <span
                 class="inline-block rounded-full bg-[#FFC107] px-4 py-1.5 text-xs font-semibold text-[#1F2937] sm:text-sm"
@@ -130,10 +130,8 @@ const steps = [
         <div
             class="relative mt-10 flex flex-col items-center gap-6 overflow-hidden rounded-2xl bg-[#EAF0FE] p-6 sm:p-8 lg:mt-14 lg:flex-row lg:gap-10 lg:p-10"
         >
-            <!-- Decorative dot pattern (CSS dots) -->
-            <!-- Decorative dot pattern (CSS dots) -->
             <div
-                class="pointer-events-none absolute right-0 top-0 h-[150px] w-[230px]"
+                class="pointer-events-none absolute right-0 top-0 h-37.5 w-57.5"
                 style="
                     background-image: radial-gradient(
                         #6b7280 1.5px,
