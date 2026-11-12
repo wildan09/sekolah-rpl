@@ -2,6 +2,8 @@
 import VisiMisiCard from '../components/ui/VisiMisiCard.vue'
 import SearchBar from '../components/ui/SearchBar.vue'
 import CardDaftarGuru from "../components/ui/CardDaftarGuru.vue";   
+import CardStruktur from "../components/ui/CardStruktur.vue";   
+
 
 defineProps({
     pesan: String,
@@ -17,4 +19,5 @@ defineProps({
         </div>
     </main>
     <CardDaftarGuru />
+    <CardStruktur />
 </template>
