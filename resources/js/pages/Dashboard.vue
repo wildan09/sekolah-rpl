@@ -21,3 +21,10 @@ defineProps({
     <CardDaftarGuru />
     <CardStruktur />
 </template>
+</script>
+
+<template>
+    <div>
+        <VisiMisiSection />
+    </div>
+</template>
