@@ -6,7 +6,8 @@ import CardStruktur from '../components/ui/CardStruktur.vue'
 import FasilitasSection from '../components/section/FasilitasSection.vue'
 import SpmbSection from '../components/sections/SpmbSection.vue'
 import Ppdb from '../components/sections/Ppdb.vue'
-import Navbar from "../layouts/Navbar.vue";
+import Navbar from '../layouts/Navbar.vue'
+import Footer from '../layouts/Footer.vue'
 
 defineProps({
     pesan: String,
@@ -27,8 +28,10 @@ defineProps({
         <SpmbSection />
         <Ppdb />
         <Navbar />
+         <Footer />
         <div class="p-8">
             <h1 class="text-3xl font-bold text-blue-600">{{ pesan }}</h1>
         </div>
     </main>
+    <Footer />
 </template>
