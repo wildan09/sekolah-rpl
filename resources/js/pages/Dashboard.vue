@@ -4,6 +4,7 @@ import SearchBar from '../components/ui/SearchBar.vue'
 import CardDaftarGuru from '../components/ui/CardDaftarGuru.vue'
 import CardStruktur from '../components/ui/CardStruktur.vue'
 import FasilitasSection from '../components/section/FasilitasSection.vue'
+import SpmbSection from '../components/sections/SpmbSection.vue'
 
 defineProps({
     pesan: String,
@@ -21,5 +22,6 @@ defineProps({
         <CardDaftarGuru />
         <CardStruktur />
         <FasilitasSection />
+        <SpmbSection />
     </main>
 </template>
