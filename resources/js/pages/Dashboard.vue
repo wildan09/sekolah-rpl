@@ -5,6 +5,7 @@ import CardDaftarGuru from '../components/ui/CardDaftarGuru.vue'
 import CardStruktur from '../components/ui/CardStruktur.vue'
 import FasilitasSection from '../components/section/FasilitasSection.vue'
 import SpmbSection from '../components/sections/SpmbSection.vue'
+import Ppdb from '../components/sections/Ppdb.vue'
 
 defineProps({
     pesan: String,
@@ -23,5 +24,10 @@ defineProps({
         <CardStruktur />
         <FasilitasSection />
         <SpmbSection />
+        <Ppdb />
+
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-blue-600">{{ pesan }}</h1>
+        </div>
     </main>
 </template>
