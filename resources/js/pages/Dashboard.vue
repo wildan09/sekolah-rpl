@@ -1,6 +1,7 @@
 <script setup>
 import VisiMisiCard from '../components/ui/VisiMisiCard.vue'
 import SearchBar from '../components/ui/SearchBar.vue'
+import CardDaftarGuru from "../components/ui/CardDaftarGuru.vue";   
 
 defineProps({
     pesan: String,
@@ -15,4 +16,5 @@ defineProps({
             <SearchBar />
         </div>
     </main>
+    <CardDaftarGuru />
 </template>
