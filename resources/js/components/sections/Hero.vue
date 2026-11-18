@@ -37,14 +37,13 @@ withDefaults(
             decoding="async"
             class="absolute inset-0 -z-10 size-full object-cover object-center"
         />
->
         <div
             class="absolute inset-0 -z-10 bg-linear-to-b/srgb from-[#666666]/60 to-black"
             aria-hidden="true"
         />
 
         <div
-            class="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-5 pt-[118px] pb-16 sm:px-8 md:px-12 lg:px-[80px] xl:px-[110px]"
+            class="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-5 py-16 sm:px-8 sm:py-20 md:px-12 lg:px-[80px] lg:pt-[118px] lg:pb-24 xl:px-[110px]"
         >
             <div class="w-full max-w-[900px]">
                 <h1
