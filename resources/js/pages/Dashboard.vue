@@ -1,11 +1,8 @@
 <script setup>
-defineProps({
-    pesan: String,
-});
+import Berita from "../components/sections/Berita.vue";
+
 </script>
 
 <template>
-    <div class="p-8">
-        <h1 class="text-3xl font-bold text-blue-600">{{ pesan }}</h1>
-    </div>
+    <Berita />
 </template>

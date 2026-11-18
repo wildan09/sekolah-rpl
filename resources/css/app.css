@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&display=swap');
+
 @import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -5,8 +8,93 @@
 @source '../js/**/*.vue';
 
 @theme {
+    /* Hanken Grotesk */
     --font-sans:
-        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+
+    /* Poppins */
+    --font-poppins: "Poppins", sans-serif;
+
+    /* Color Palette */
+    --color-primary-50: #FFCB30;
+    --color-primary-40: #FFD65A;
+    --color-primary-30: #FFE083;
+    --color-primary-20: #FFEAAC;
+    --color-primary-10: #FFF3CD;
+    --color-primary-60: #FFC107;
+    --color-primary-70: #D4A106;
+    --color-primary-80: #AA8105;
+    --color-primary-90: #806104;
+    --color-primary-100: #554002;
+    --color-secondary-50: #3A4655;
+    --color-secondary-40: #626B77;
+    --color-secondary-30: #899099;
+    --color-secondary-20: #B0B5BB;
+    --color-secondary-10: #D0D3D6;
+    --color-secondary-60: #132133;
+    --color-secondary-70: #101C2B;
+    --color-secondary-80: #0D1622;
+    --color-secondary-90: #0A111A;
+    --color-secondary-100: #060B11;
+    --color-neutral-50: #808080;
+    --color-neutral-40: #AAAAAA;
+    --color-neutral-30: #CCCCCC;
+    --color-neutral-20: #D5D5D5;
+    --color-neutral-10: #FFFFFF;
+    --color-neutral-60: #555555;
+    --color-neutral-70: #555555;
+    --color-neutral-80: #333333;
+    --color-neutral-90: #2B2B2B;
+    --color-neutral-100: #000000;
+}
+
+
+@layer utilities {
+  
+  .heading-1 {
+    font-size: 2rem;      
+    font-weight: 700;
+    line-height: 1.2;
+    @media (min-width: 640px) { font-size: 3rem; }     
+    @media (min-width: 1024px) { font-size: 4.125rem; } 
+  }
+
+  .heading-2 {
+    font-size: 1.75rem;   
+    font-weight: 700;
+    line-height: 1.25;
+    @media (min-width: 640px) { font-size: 2.25rem; }  
+    @media (min-width: 1024px) { font-size: 3rem; }    
+  }
+
+  .heading-3 {
+    font-size: 1.5rem;   
+    font-weight: 600;
+    line-height: 1.3;
+    @media (min-width: 640px) { font-size: 1.875rem; } 
+    @media (min-width: 1024px) { font-size: 2.25rem; }  
+  }
+
+  .heading-4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    @media (min-width: 1024px) { font-size: 1.75rem; }  
+  }
+
+  .heading-5 {
+    font-size: 1.125rem; 
+    font-weight: 600;
+    line-height: 1.4;
+    @media (min-width: 1024px) { font-size: 1.375rem; }
+  }
+
+  .heading-6 {
+    font-size: 1rem;     
+    font-weight: 600;
+    line-height: 1.5;
+    @media (min-width: 1024px) { font-size: 1.125rem; }
+  }
 }
