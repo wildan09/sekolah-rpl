@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3";
 
@@ -27,12 +26,8 @@ withDefaults(
 
 <template>
     <section
-        class="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-b-[32px] bg-brand-navy shadow-hero
-               sm:min-h-[680px] sm:rounded-b-[56px]
-               lg:min-h-[780px] lg:rounded-b-[80px]
-               xl:min-h-[880px]"
+        class="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-b-[32px] bg-brand-navy shadow-hero sm:min-h-[680px] sm:rounded-b-[56px] lg:min-h-[780px] lg:rounded-b-[80px] xl:h-[940px]"
     >
-        <!-- Background Image -->
         <img
             :src="imageSrc"
             :alt="imageAlt"
@@ -42,60 +37,37 @@ withDefaults(
             decoding="async"
             class="absolute inset-0 -z-10 size-full object-cover object-center"
         />
-
-        <!-- Overlay -->
+>
         <div
-            class="absolute inset-0 -z-10 bg-linear-to-b from-black/55 via-black/65 to-black/80"
+            class="absolute inset-0 -z-10 bg-linear-to-b/srgb from-[#666666]/60 to-black"
             aria-hidden="true"
         />
 
-        <!-- Content -->
         <div
-            class="mx-auto flex w-full max-w-[1440px] flex-1 items-center
-                   px-5 py-24
-                   sm:px-8 sm:py-28
-                   md:px-12
-                   lg:px-[80px] lg:py-32
-                   xl:px-[110px]"
+            class="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-5 pt-[118px] pb-16 sm:px-8 md:px-12 lg:px-[80px] xl:px-[110px]"
         >
             <div class="w-full max-w-[900px]">
-
-                <!-- Headline -->
                 <h1
-                    class="max-w-[848px] text-[clamp(2.25rem,5.5vw,4.125rem)]
-                           leading-[1.15] font-bold tracking-tight
-                           text-balance text-white uppercase"
+                    class="max-w-[848px] text-[clamp(2.25rem,5.5vw,4.125rem)] leading-[1.4] font-bold tracking-tight text-white uppercase"
                 >
                     {{ headline }}
                 </h1>
 
-                <!-- Tagline -->
                 <p
-                    class="mt-4 text-[clamp(1.5rem,3.5vw,3rem)]
-                           leading-tight font-bold text-primary-60"
+                    class="mt-4 text-[clamp(1.5rem,3.5vw,3rem)] leading-tight font-bold text-primary-60"
                 >
                     {{ tagline }}
                 </p>
 
-                <!-- Description -->
                 <p
-                    class="mt-5 max-w-[600px]
-                           text-base leading-relaxed text-neutral-40
-                           sm:mt-6 sm:text-lg
-                           lg:text-xl"
+                    class="mt-5 max-w-[640px] text-base leading-[1.3] text-neutral-40 sm:mt-6 sm:text-lg lg:text-xl"
                 >
                     {{ description }}
                 </p>
 
-                <!-- CTA -->
                 <Link
                     :href="ctaHref"
-                    class="mt-7 inline-flex items-center justify-center gap-4
-                           rounded-xl bg-primary-60 px-5 py-3
-                           text-sm font-semibold text-secondary-60
-                           transition-colors duration-300
-                           hover:bg-primary-50
-                           sm:mt-8 sm:gap-5 sm:px-6 sm:py-3.5 sm:text-base"
+                    class="mt-7 inline-flex items-center justify-center gap-4 rounded-xl bg-primary-60 px-5 py-3 text-sm font-semibold text-secondary-60 transition-colors duration-300 hover:bg-primary-50 sm:mt-8 sm:gap-5 sm:px-6 sm:py-3.5 sm:text-base"
                 >
                     {{ ctaLabel }}
 
