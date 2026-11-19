@@ -6,6 +6,7 @@ import CardStruktur from '../components/ui/CardStruktur.vue'
 import FasilitasSection from '../components/section/FasilitasSection.vue'
 import SpmbSection from '../components/sections/SpmbSection.vue'
 import Ppdb from '../components/sections/Ppdb.vue'
+import ProgramKeahlian from '../components/sections/ProgramKeahlianJs.vue' // BARU
 import Navbar from '../layouts/Navbar.vue'
 import Footer from '../layouts/Footer.vue'
 
@@ -24,6 +25,7 @@ defineProps({
 
         <CardDaftarGuru />
         <CardStruktur />
+        <ProgramKeahlian /> <!-- BARU -->
         <FasilitasSection />
         <SpmbSection />
         <Ppdb />
