@@ -1,10 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 
 const selectedJurusan = ref("Semua Prodi");
-
 const currentPage = ref(1);
-
 const itemsPerPage = 9;
 
 const jurusanList = [
@@ -148,15 +146,29 @@ const filteredFasilitas = computed(() => {
     );
 });
 
-const totalPages = computed(() => {
-    return Math.ceil(filteredFasilitas.value.length / itemsPerPage);
-});
+const totalPages = computed(() =>
+    Math.ceil(filteredFasilitas.value.length / itemsPerPage),
+);
 
 const paginatedFasilitas = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
+    return filteredFasilitas.value.slice(start, start + itemsPerPage);
+});
 
-    return filteredFasilitas.value.slice(start, end);
+const paginationPages = computed(() => {
+    const total = totalPages.value;
+    const current = currentPage.value;
+
+    if (total <= 5) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (current <= 3) {
+        return [1, 2, 3, "...", total];
+    }
+    if (current >= total - 2) {
+        return [1, "...", total - 2, total - 1, total];
+    }
+    return [1, "...", current, "...", total];
 });
 
 const goToPage = (page) => {
@@ -164,37 +176,76 @@ const goToPage = (page) => {
 };
 
 const previousPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-    }
+    if (currentPage.value > 1) currentPage.value--;
 };
 
 const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-    }
+    if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 const changeJurusan = () => {
     currentPage.value = 1;
 };
 
+const modalOpen = ref(false);
+const modalImages = ref([]);
+const modalActive = ref(0);
+
+const activeImage = computed(
+    () => modalImages.value[modalActive.value] || null,
+);
+
 const openModal = (index) => {
-    const images = paginatedFasilitas.value.map((item) => ({
+    modalImages.value = paginatedFasilitas.value.map((item) => ({
         nama: item.nama,
         gambar: item.gambar,
     }));
-
-    window.dispatchEvent(
-        new CustomEvent("open-fasilitas-modal", {
-            detail: {
-                images: images,
-                index: index,
-            },
-        }),
-    );
+    modalActive.value = index;
+    modalOpen.value = true;
 };
+
+const closeModal = () => {
+    modalOpen.value = false;
+};
+
+const modalPrevious = () => {
+    if (modalActive.value > 0) modalActive.value--;
+};
+
+const modalNext = () => {
+    if (modalActive.value < modalImages.value.length - 1) {
+        modalActive.value++;
+    }
+};
+
+const modalGoTo = (index) => {
+    if (index >= 0 && index < modalImages.value.length) {
+        modalActive.value = index;
+    }
+};
+watch(modalOpen, (isOpen) => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+});
+
+// Keyboard: Esc, ←, →
+const handleKeydown = (event) => {
+    if (!modalOpen.value) return;
+
+    if (event.key === "Escape") closeModal();
+    if (event.key === "ArrowLeft") modalPrevious();
+    if (event.key === "ArrowRight") modalNext();
+};
+
+onMounted(() => {
+    window.addEventListener("keydown", handleKeydown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("keydown", handleKeydown);
+    document.body.style.overflow = "";
+});
 </script>
+
 <template>
     <section class="w-full px-27.5 py-6">
         <div class="flex items-end justify-between gap-6">
@@ -217,7 +268,9 @@ const openModal = (index) => {
                         </svg>
                     </span>
 
-                    <span class="text-[24px] font-Bold uppercase text-[#1F2937]">
+                    <span
+                        class="text-[24px] font-Bold uppercase text-[#1F2937]"
+                    >
                         Fasilitas
                     </span>
                 </div>
@@ -228,6 +281,7 @@ const openModal = (index) => {
                     Ruang Belajar yang Mendukung Potensi Setiap Jurusan
                 </h2>
             </div>
+
             <div class="relative w-35 shrink-0">
                 <select
                     v-model="selectedJurusan"
@@ -282,9 +336,7 @@ const openModal = (index) => {
                     >
                         <span
                             class="h-1.5 w-1.5 shrink-0 rounded-full"
-                            :style="{
-                                backgroundColor: fasilitas.warna,
-                            }"
+                            :style="{ backgroundColor: fasilitas.warna }"
                         ></span>
 
                         <span class="truncate">
@@ -299,230 +351,196 @@ const openModal = (index) => {
                 </div>
             </article>
         </div>
-        <div v-if="totalPages > 1" class="mt-5 flex justify-center">
-            <div class="flex items-center gap-1">
+        <div v-if="totalPages > 1" class="mt-8 flex justify-center">
+            <div class="flex items-center gap-3.5">
+                <!-- Previous -->
                 <button
                     type="button"
                     @click="previousPage"
                     :disabled="currentPage === 1"
-                    class="flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-xs text-gray-400 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    ‹
-                </button>
-                <button
-                    v-for="(page, index) in totalPages"
-                    :key="index"
-                    type="button"
-                    @click="goToPage(page)"
-                    :class="[
-                        'flex h-7 w-7 items-center justify-center rounded border text-xs transition',
-                        currentPage === page
-                            ? 'border-[#FFD45C] text-[#FFD45C]'
-                            : 'border-gray-200 text-gray-500 hover:bg-gray-50',
-                    ]"
-                >
-                    {{ page }}
-                </button>
-                <button
-                    type="button"
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                    class="flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-xs text-gray-400 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#B8B8B8] bg-white text-[#1F2937] transition-all duration-200 hover:border-[#FFD000] hover:bg-[#FFFBEA] disabled:cursor-not-allowed disabled:border-[#B8B8B8] disabled:bg-[#B8B8B8] disabled:text-white disabled:opacity-100"
+                    aria-label="Halaman sebelumnya"
                 >
                     <svg
-                        width="11"
-                        height="21"
-                        viewBox="0 0 11 21"
+                        width="10"
+                        height="16"
+                        viewBox="0 0 10 16"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <path
-                            d="M9.37589 0.275208L0.267602 9.66008C0.182916 9.74724 0.115734 9.85075 0.0698967 9.96468C0.0240602 10.0786 0.000469208 10.2007 0.000469208 10.3241C0.000469208 10.4474 0.0240602 10.5695 0.0698967 10.6834C0.115734 10.7974 0.182916 10.9009 0.267602 10.988L9.37589 20.3729C9.5468 20.549 9.7786 20.6479 10.0203 20.6479C10.262 20.6479 10.4938 20.549 10.6647 20.3729C10.8356 20.1968 10.9316 19.958 10.9316 19.7089C10.9316 19.4599 10.8356 19.2211 10.6647 19.045L2.1997 10.3241L10.6647 1.60317C10.7493 1.51597 10.8165 1.41246 10.8623 1.29853C10.9081 1.1846 10.9316 1.0625 10.9316 0.939188C10.9316 0.815874 10.9081 0.693769 10.8623 0.579844C10.8165 0.465918 10.7493 0.362402 10.6647 0.275208C10.5801 0.188011 10.4796 0.118845 10.3691 0.0716553C10.2585 0.0244656 10.14 0.000177383 10.0203 0.000177383C9.90063 0.000177383 9.78212 0.0244656 9.67155 0.0716553C9.56098 0.118845 9.46052 0.188011 9.37589 0.275208Z"
-                            fill="white"
+                            d="M9 1L2 8L9 15"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </button>
+                <template v-for="(page, index) in paginationPages" :key="index">
+                    <span
+                        v-if="page === '...'"
+                        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#B8B8B8] bg-white text-[20px] font-medium text-[#1F2937]"
+                    >
+                        ...
+                    </span>
+
+                    <button
+                        v-else
+                        type="button"
+                        @click="goToPage(page)"
+                        :class="[
+                            'flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border text-[20px] font-medium transition-all duration-200',
+                            currentPage === page
+                                ? 'border-[#FFD000] bg-white text-[#FFD000]'
+                                : 'border-[#B8B8B8] bg-white text-[#1F2937] hover:border-[#FFD000] hover:bg-[#FFFBEA] hover:text-[#FFD000]',
+                        ]"
+                    >
+                        {{ page }}
+                    </button>
+                </template>
+                <button
+                    type="button"
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                    class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#B8B8B8] bg-white text-[#1F2937] transition-all duration-200 hover:border-[#FFD000] hover:bg-[#FFFBEA] disabled:cursor-not-allowed disabled:border-[#B8B8B8] disabled:bg-[#B8B8B8] disabled:text-white disabled:opacity-100"
+                    aria-label="Halaman berikutnya"
+                >
+                    <svg
+                        width="10"
+                        height="16"
+                        viewBox="0 0 10 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M1 1L8 8L1 15"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
                         />
                     </svg>
                 </button>
             </div>
         </div>
     </section>
-    <div
-        x-data="{
-        open: false,
-        images: [],
-        active: 0,
-        activeImage: null,
-
-        show(data) {
-            this.images = data.images || [];
-            this.active = data.index || 0;
-            this.activeImage = this.images[this.active] || null;
-            this.open = true;
-
-            document.body.style.overflow = 'hidden';
-
-            console.log('Images:', this.images);
-            console.log('Active:', this.active);
-            console.log('Active Image:', this.activeImage);
-        },
-
-        close() {
-            this.open = false;
-            this.images = [];
-            this.active = 0;
-            this.activeImage = null;
-
-            document.body.style.overflow = '';
-        },
-
-        previous() {
-            if (this.active > 0) {
-                this.active--;
-                this.activeImage = this.images[this.active];
-            }
-        },
-
-        next() {
-            if (this.active < this.images.length - 1) {
-                this.active++;
-                this.activeImage = this.images[this.active];
-            }
-        },
-
-        goTo(index) {
-            if (index >= 0 && index < this.images.length) {
-                this.active = index;
-                this.activeImage = this.images[this.active];
-            }
-        }
-    }"
-        x-init="
-        window.addEventListener('open-fasilitas-modal', (event) => {
-            show(event.detail);
-        });
-
-        window.addEventListener('keydown', (event) => {
-            if (!open) return;
-
-            if (event.key === 'Escape') {
-                close();
-            }
-
-            if (event.key === 'ArrowLeft') {
-                previous();
-            }
-
-            if (event.key === 'ArrowRight') {
-                next();
-            }
-        });
-    "
-        x-show="open"
-        x-cloak
-        x-transition:enter="transition duration-300 ease-out"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        class="fixed inset-0 z-[9999]"
-    >
-        <div class="absolute inset-0 bg-black/80" x-on:click="close()"></div>
-        <button
-            type="button"
-            x-on:click="close()"
-            class="absolute right-8 top-7 z-[10000] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-light text-[#1F2937] shadow-lg transition duration-200 hover:scale-105 hover:bg-gray-100"
-            aria-label="Tutup"
+    <Teleport to="body">
+        <Transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="1em"
-                height="1em"
-                viewBox="0 0 24 24"
-            >
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    d="m6 6l12 12m0-12L6 18"
-                />
-            </svg>
-        </button>
-        <div
-            class="relative flex h-full w-full items-center justify-center px-6"
-            x-on:click.stop
-        >
-            <div
-                class="relative flex w-full max-w-275 flex-col items-center"
-            >
-                <div class="flex w-full items-center gap-4 sm:gap-6">
-                    <button
-                        type="button"
-                        x-on:click="previous()"
-                        x-bind:disabled="active === 0"
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#FFD000] transition hover:bg-[#e9bd00] disabled:cursor-not-allowed disabled:opacity-40"
-                        aria-label="Gambar sebelumnya"
+            <div v-if="modalOpen" class="fixed inset-0 z-[9999]">
+                <div
+                    class="absolute inset-0 bg-black/80"
+                    @click="closeModal"
+                ></div>
+                <button
+                    type="button"
+                    @click="closeModal"
+                    class="absolute right-8 top-7 z-[10000] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-light text-[#1F2937] shadow-lg transition duration-200 hover:scale-105 hover:bg-gray-100"
+                    aria-label="Tutup"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 24 24"
                     >
-                        <svg
-                            width="11"
-                            height="21"
-                            viewBox="0 0 11 21"
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path
                             fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M9.37589 0.275208L0.267602 9.66008C0.182916 9.74724 0.115734 9.85075 0.0698967 9.96468C0.0240602 10.0786 0.000469208 10.2007 0.000469208 10.3241C0.000469208 10.4474 0.0240602 10.5695 0.0698967 10.6834C0.115734 10.7974 0.182916 10.9009 0.267602 10.988L9.37589 20.3729C9.5468 20.549 9.7786 20.6479 10.0203 20.6479C10.262 20.6479 10.4938 20.549 10.6647 20.3729C10.8356 20.1968 10.9316 19.958 10.9316 19.7089C10.9316 19.4599 10.8356 19.2211 10.6647 19.045L2.1997 10.3241L10.6647 1.60317C10.7493 1.51597 10.8165 1.41246 10.8623 1.29853C10.9081 1.1846 10.9316 1.0625 10.9316 0.939188C10.9316 0.815874 10.9081 0.693769 10.8623 0.579844C10.8165 0.465918 10.7493 0.362402 10.6647 0.275208C10.5801 0.188011 10.4796 0.118845 10.3691 0.0716553C10.2585 0.0244656 10.14 0.000177383 10.0203 0.000177383C9.90063 0.000177383 9.78212 0.0244656 9.67155 0.0716553C9.56098 0.118845 9.46052 0.188011 9.37589 0.275208Z"
-                                fill="white"
-                            />
-                        </svg>
-                    </button>
-                    <div
-                        class="relative h-100 w-full flex-1 overflow-hidden rounded-xl bg-white shadow-2xl"
-                    >
-                        <img
-                            x-show="activeImage"
-                            x-bind:src="activeImage ? activeImage.gambar : ''"
-                            x-bind:alt="activeImage ? activeImage.nama : ''"
-                            class="h-full w-full object-cover"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            d="m6 6l12 12m0-12L6 18"
                         />
-                    </div>
-                    <button
-                        type="button"
-                        x-on:click="next()"
-                        x-bind:disabled="active === images.length - 1"
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#FFD000] transition hover:bg-[#e9bd00] disabled:cursor-not-allowed disabled:opacity-40"
-                        aria-label="Gambar berikutnya"
+                    </svg>
+                </button>
+
+                <div
+                    class="pointer-events-none relative flex h-full w-full items-center justify-center px-6"
+                >
+                    <div
+                        class="pointer-events-auto relative flex w-full max-w-275 flex-col items-center"
                     >
-                        <svg
-                            width="11"
-                            height="21"
-                            viewBox="0 0 11 21"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
+                        <div class="flex w-full items-center gap-4 sm:gap-6">
+                            <button
+                                type="button"
+                                @click="modalPrevious"
+                                :disabled="modalActive === 0"
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#FFD000] transition hover:bg-[#e9bd00] disabled:cursor-not-allowed disabled:opacity-40"
+                                aria-label="Gambar sebelumnya"
+                            >
+                                <svg
+                                    width="11"
+                                    height="21"
+                                    viewBox="0 0 11 21"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M9.37589 0.275208L0.267602 9.66008C0.182916 9.74724 0.115734 9.85075 0.0698967 9.96468C0.0240602 10.0786 0.000469208 10.2007 0.000469208 10.3241C0.000469208 10.4474 0.0240602 10.5695 0.0698967 10.6834C0.115734 10.7974 0.182916 10.9009 0.267602 10.988L9.37589 20.3729C9.5468 20.549 9.7786 20.6479 10.0203 20.6479C10.262 20.6479 10.4938 20.549 10.6647 20.3729C10.8356 20.1968 10.9316 19.958 10.9316 19.7089C10.9316 19.4599 10.8356 19.2211 10.6647 19.045L2.1997 10.3241L10.6647 1.60317C10.7493 1.51597 10.8165 1.41246 10.8623 1.29853C10.9081 1.1846 10.9316 1.0625 10.9316 0.939188C10.9316 0.815874 10.9081 0.693769 10.8623 0.579844C10.8165 0.465918 10.7493 0.362402 10.6647 0.275208C10.5801 0.188011 10.4796 0.118845 10.3691 0.0716553C10.2585 0.0244656 10.14 0.000177383 10.0203 0.000177383C9.90063 0.000177383 9.78212 0.0244656 9.67155 0.0716553C9.56098 0.118845 9.46052 0.188011 9.37589 0.275208Z"
+                                        fill="white"
+                                    />
+                                </svg>
+                            </button>
+                            <div
+                                class="relative h-100 w-full flex-1 overflow-hidden rounded-xl bg-white shadow-2xl"
+                            >
+                                <img
+                                    v-if="activeImage"
+                                    :src="activeImage.gambar"
+                                    :alt="activeImage.nama"
+                                    class="h-full w-full object-cover"
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                @click="modalNext"
+                                :disabled="
+                                    modalActive === modalImages.length - 1
+                                "
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#FFD000] transition hover:bg-[#e9bd00] disabled:cursor-not-allowed disabled:opacity-40"
+                                aria-label="Gambar berikutnya"
+                            >
+                                <svg
+                                    width="11"
+                                    height="21"
+                                    viewBox="0 0 11 21"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M1.55575 20.3727L10.664 10.9879C10.7487 10.9007 10.8159 10.7972 10.8617 10.6833C10.9076 10.5693 10.9312 10.4472 10.9312 10.3239C10.9312 10.2006 10.9076 10.0784 10.8617 9.9645C10.8159 9.85057 10.7487 9.74707 10.664 9.65991L1.55575 0.275029C1.38484 0.098931 1.15304 0 0.911336 0C0.669634 0 0.437832 0.098931 0.266924 0.275029C0.0960149 0.451128 0 0.689969 0 0.939009C0 1.18805 0.0960149 1.42689 0.266924 1.60299L8.73194 10.3239L0.266924 19.0448C0.182298 19.132 0.11517 19.2355 0.0693709 19.3494C0.023572 19.4633 0 19.5855 0 19.7088C0 19.8321 0.023572 19.9542 0.0693709 20.0681C0.11517 20.182 0.182298 20.2855 0.266924 20.3727C0.351549 20.4599 0.452014 20.5291 0.562582 20.5763C0.673151 20.6235 0.791657 20.6478 0.911336 20.6478C1.03101 20.6478 1.14952 20.6235 1.26009 20.5763C1.37066 20.5291 1.47112 20.4599 1.55575 20.3727Z"
+                                        fill="white"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div
+                            class="mt-4 flex items-center justify-center gap-1.5"
                         >
-                            <path
-                                d="M1.55575 20.3727L10.664 10.9879C10.7487 10.9007 10.8159 10.7972 10.8617 10.6833C10.9076 10.5693 10.9312 10.4472 10.9312 10.3239C10.9312 10.2006 10.9076 10.0784 10.8617 9.9645C10.8159 9.85057 10.7487 9.74707 10.664 9.65991L1.55575 0.275029C1.38484 0.098931 1.15304 0 0.911336 0C0.669634 0 0.437832 0.098931 0.266924 0.275029C0.0960149 0.451128 0 0.689969 0 0.939009C0 1.18805 0.0960149 1.42689 0.266924 1.60299L8.73194 10.3239L0.266924 19.0448C0.182298 19.132 0.11517 19.2355 0.0693709 19.3494C0.023572 19.4633 0 19.5855 0 19.7088C0 19.8321 0.023572 19.9542 0.0693709 20.0681C0.11517 20.182 0.182298 20.2855 0.266924 20.3727C0.351549 20.4599 0.452014 20.5291 0.562582 20.5763C0.673151 20.6235 0.791657 20.6478 0.911336 20.6478C1.03101 20.6478 1.14952 20.6235 1.26009 20.5763C1.37066 20.5291 1.47112 20.4599 1.55575 20.3727Z"
-                                fill="white"
-                            />
-                        </svg>
-                    </button>
-                </div>
-                <div class="mt-4 flex items-center justify-center gap-1.5">
-                    <template
-                        x-for="(image, index) in images"
-                        x-bind:key="index"
-                    >
-                        <button
-                            type="button"
-                            x-on:click="goTo(index)"
-                            x-bind:class="
-                            active === index
-                                ? 'w-16 bg-[#FFD000]'
-                                : 'w-1.5 bg-white/70'
-                        "
-                            class="h-1.5 rounded-full transition-all duration-300"
-                            x-bind:aria-label="'Gambar ' + (index + 1)"
-                        ></button>
-                    </template>
+                            <button
+                                v-for="(image, index) in modalImages"
+                                :key="index"
+                                type="button"
+                                @click="modalGoTo(index)"
+                                :class="
+                                    modalActive === index
+                                        ? 'w-16 bg-[#FFD000]'
+                                        : 'w-1.5 bg-white/70'
+                                "
+                                class="h-1.5 rounded-full transition-all duration-300"
+                                :aria-label="'Gambar ' + (index + 1)"
+                            ></button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </Transition>
+    </Teleport>
 </template>
