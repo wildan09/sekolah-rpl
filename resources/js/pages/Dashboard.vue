@@ -1,11 +1,11 @@
 <script setup>
+import ArtikelSection from "@/Components/sections/ArtikelSection.vue";
 defineProps({
     pesan: String,
+    articles: Array,
 });
 </script>
 
 <template>
-    <div class="p-8">
-        <h1 class="text-3xl font-bold text-blue-600">{{ pesan }}</h1>
-    </div>
+    <ArtikelSection />
 </template>
