@@ -9,12 +9,10 @@ export interface News {
     isImportant: boolean;
 }
 
-const dummyImage = "/images/berita-jetz.webp";
-
 const newsMock: News[] = [
     {
         id: 1,
-        title: "🎉Keseruan JETZ School Activation di SMKN 1 Purwosari!🎉",
+        title: "🎉Keseruan JETZ School Activation di SMKN 1 Purwosari!",
         excerpt:
             'Hari ini, SMKN 1 Purwosari dipenuhi energi positif dan semangat luar biasa dalam acara "JETZ School Activation"! Acara ini merupakan wujud nyata sinergi antara dunia pendidikan dan dunia industri, menjalin kerja sama link and match yang luar biasa dengan PT Indofood Fortuna Makmur (Brand Jet-Z), PT Jaya Impian Abadi, dan agency Momentum Kreasindo.',
         image: "/images/berita-jetz.webp",
@@ -88,6 +86,7 @@ const props = withDefaults(
         ctaHref?: string;
     }>(),
     {
+        items: () => newsMock,
         eyebrow: "Berita Terbaru",
         title: "Informasi dan Kabar Terkini",
         ctaLabel: "Lihat Semua Berita",
@@ -95,9 +94,7 @@ const props = withDefaults(
     },
 );
 
-const list = computed<News[]>(
-    () => props.items ?? (import.meta.env.DEV ? newsMock : []),
-);
+const list = computed<News[]>(() => props.items);
 
 const formatDate = (iso: string) =>
     new Intl.DateTimeFormat("id-ID", {
@@ -199,7 +196,7 @@ onMounted(updateActive);
                             />
 
                             <div
-                                class="absolute inset-0 bg-linear-to-b/srgb from-[#666666]/30 from-0% to-black to-100%"
+                                class="absolute inset-0 bg-linear-to-b/srgb from-[#666666]/0 from-0% to-black to-100%"
                                 aria-hidden="true"
                             />
 
@@ -215,7 +212,7 @@ onMounted(updateActive);
                             </span>
 
                             <div
-                                class="relative flex flex-col px-5 pt-20 pb-8 sm:px-8 lg:p-[30px]"
+                                class="relative flex flex-col px-5 pt-20 pb-8 sm:px-8 lg:p-[50px]"
                             >
                                 <time
                                     :datetime="item.publishedAt"
@@ -225,24 +222,24 @@ onMounted(updateActive);
                                 </time>
 
                                 <h3
-                                    class="heading-5 mt-3 line-clamp-2 text-neutral-10"
+                                    class="text-2xl font-bold mt-5 line-clamp-2 text-neutral-10"
                                 >
                                     {{ item.title }}
                                 </h3>
 
                                 <p
-                                    class="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-30 sm:text-base lg:text-lg lg:text-justify"
+                                    class="mt-1.5 line-clamp-3 text-sm leading-[1.4] text-neutral-30 sm:text-base lg:text-lg lg:text-justify"
                                 >
                                     {{ item.excerpt }}
                                 </p>
 
                                 <Link
                                     :href="item.href"
-                                    class="mt-4 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary-60 transition-colors duration-300 hover:text-primary-40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-60"
+                                    class="group mt-5 inline-flex w-fit items-center gap-3.5 text-base text-primary-60 transition-colors duration-300 hover:text-primary-40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-60"
                                 >
                                     Lihat detail
                                     <ArrowRight
-                                        class="size-4"
+                                        class="size-4 transition-transform duration-300 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5 motion-reduce:transition-none motion-reduce:transform-none"
                                         :stroke-width="1.5"
                                         aria-hidden="true"
                                     />
